@@ -1,0 +1,362 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <conio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define vermelho "\x1b[31m"
+#define verde "\x1b[32m"
+#define amarelo "\x1b[33m"
+#define ciano "\x1b[36m"
+#define reset "\x1b[0m"
+
+void jogoDaForca() {
+	printf(amarelo "\t             ___                         _        ______                  \n");
+	printf("\t            |_  |                       | |       |  ___|                 \n");
+	printf("\t              | | ___   __ _  ___     __| | __ _  | |_ ___  _ __ ___ __ _ \n");
+	printf("\t              | |/ _ \\ / _` |/ _ \\   / _` |/ _` | |  _/ _ \\| '__/ __/ _` |\n");
+	printf("\t          /\\__/ / (_) | (_| | (_) | | (_| | (_| | | || (_) | | | (_| (_| |\n");
+	printf("\t          \\____/ \\___/ \\__, |\\___/   \\__,_|\\__,_| \\_| \\___/|_|  \\___\\__,_|\n");
+	printf("\t                        __/ |                                             \n");
+	printf("\t                       |___/\n" reset);
+
+}
+
+void forca(int erros);
+void zerar(char tema[],char palavra[],char palavraAux[],char letra,char mesa[],char tentativas[],char chute[]);
+
+int main() {
+	system("cls");
+	char tema[50], palavra[30], palavraAux[30], letra, mesa[30], tentativas[26], chute[30];
+	int i , j ,k ,l , tamanhoPalavra, final, erros, auxErros, jogarNovamente;
+
+	i = 0;
+	j = 0;
+	k = 0;
+	l = 0;
+	
+	auxErros = 0;
+	tentativas[0] = ' ';
+	tentativas[1] = ' ';
+	tentativas[2] = ' ';
+	tentativas[3] = ' ';
+	
+	do {
+		erros = 9;
+		zerar(tema, palavra, palavraAux, letra, mesa, tentativas, chute);
+		i = 0;
+		k = 0;
+		tamanhoPalavra = 0;
+		final = 0;
+		auxErros = 0;
+		setbuf(stdin, 0);
+		
+		jogoDaForca();
+		printf("\n\n\n");
+
+		printf(ciano " INFORME UM TEMA: \n" reset);
+		printf("- ");
+		gets(tema);
+		fflush(stdin);
+		printf("\n");
+
+		printf(ciano " INFORME UMA PALAVRA (SIMPLES OU COMPOSTA): \n" reset);
+		printf("- ");
+		gets(palavra);
+		fflush(stdin);
+		system("cls");
+
+		tamanhoPalavra = strlen(palavra);
+
+		for(i = 0; i < tamanhoPalavra;i++){
+			palavra[i] = toupper(palavra[i]);
+		}
+	
+		for(i = 0; i < tamanhoPalavra ; i++) {
+			if(palavra[i] == ' ') {
+				mesa[i] = ' ';
+			} else {
+				mesa[i] = '_';
+			}
+		}
+
+		do {
+			printf("\n\n\n\n\n");
+			printf(ciano "\tTEMA:"reset" %s\n", tema );
+			fflush(stdin);
+			printf(ciano "\tTENTATIVAS:"reset" %s \n", tentativas);
+			printf(verde "\tVIDA "reset"%d/9\n", erros);
+			printf(reset);
+			forca(erros);
+			printf("\n\n");
+
+
+
+			for(i = 0; i < tamanhoPalavra ; i++) {
+				printf(" %c", mesa[i]);
+			}
+			printf("\n\n\n");
+
+			
+			printf("CASO DESEJE FAZER UM CHUTE DIGITE *\n");
+			printf("DIGITE UMA LETRA: ");
+			scanf("%c", &letra);
+			letra = toupper(letra);
+			fflush(stdin);
+			tentativas[k] = letra;
+			
+			if(letra == '*'){
+				k = 0;
+				printf("TENTATIVA DE CHUTE: ");
+				gets(chute);
+				for(i = 0; i <= strlen(chute); i++){
+					chute[i] = toupper(chute[i]);
+				}
+				
+				fflush(stdin);
+				if(!strcmp(chute,palavra)) {
+				final = 1;
+				break;
+			}else{
+				final = 2;
+				break;
+			}
+			
+			}
+			
+			
+			for(j = 0; j < tamanhoPalavra; j++) {
+				if(letra == palavra[j]) {
+					mesa[j] = letra;
+					auxErros++;
+				}
+
+				printf("%c ",mesa[j]);
+			}
+
+			if(auxErros == 0) {
+				erros--;
+			}
+			auxErros = 0;
+
+			if(erros == 0) {
+				k = 26;
+			}
+
+			if(!strcmp(mesa,palavra)) {
+				k = 26;
+				final = 1;
+			}
+
+			system("cls");
+			k++;
+		} while(k <= 26);
+
+		if(final == 1) {
+			system("cls");
+			printf("\n\n\n");
+			printf(verde "\t\t\t\tPARABENS! VOCE VENCEU!!!\n" reset);
+			printf("A PALAVRA ERA:"verde" %s\n" reset, palavra);
+			printf(" \n");
+			printf(" \n");
+			printf("            (^ - ^) \n");
+			printf("              >-< \n");
+			printf("              /|\\ \n");
+			printf("           _ / | \\_ \n");
+			printf("               |  \n");
+			printf("               | \n");
+			printf("              / \\ \n");
+			printf("            _/   \\_ \n"reset);
+			printf("\n");
+			printf("SE DESEJA JOGAR NOVAMENTE DIGITE 1, SENAO DIGITE 2: \n");
+			scanf("%d", &jogarNovamente);
+			fflush(stdin);
+			system("cls");
+		} else {
+			system("cls");
+			printf("\n\n\n");
+			printf(vermelho "\t\t\t\tVOCE PERDEU!"reset" TENTE NOVAMENTE...\n");
+			printf("A PALAVRA ERA:"vermelho" %s\n" reset, palavra);
+			printf(" ________________________\n");
+			printf(" |              | \n");
+			printf(" |          "vermelho" (X _ X) \n"reset);
+			printf(" |            "vermelho" >-< \n"reset);
+			printf(" |         "vermelho"    /|\\ \n"reset);
+			printf(" |         "vermelho" _ / | \\_ \n"reset);
+			printf(" |           "vermelho"   | \n"reset);
+			printf(" |            "vermelho"  | \n"reset);
+			printf(" |            "vermelho" / \\ \n"reset);
+			printf(" |          "vermelho" _/   \\_ \n"reset);
+			printf("_|_\n");
+			printf("\n");
+			printf("SE DESEJA JOGAR NOVAMENTE DIGITE 1, SENAO DIGITE 2: \n");
+			scanf("%d", &jogarNovamente);
+			fflush(stdin);
+			system("cls");
+		}
+
+	}while(jogarNovamente == 1);
+	
+	printf("\n\n\n\n\n\n");
+	system("pause");
+	return 0;
+}
+
+void forca(int erros) {
+	
+	if(erros == 9) {
+		printf(" ________________________\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf("_|_\n");
+	} else if(erros == 8) {
+		printf(" ________________________\n");
+		printf(" |              |\n");
+		printf(" |           (    )\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf("_|_\n");
+	} else if(erros == 7) {
+		printf(" ________________________\n");
+		printf(" |              |\n");
+		printf(" |           (o   o)\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf("_|_\n");
+	} else if(erros == 6) {
+		printf(" ________________________\n");
+		printf(" |              |\n");
+		printf(" |           (o _ o)\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf("_|_\n");
+	} else if(erros == 5) {
+		printf(" ________________________\n");
+		printf(" |              |\n");
+		printf(" |           (o _ o)\n");
+		printf(" |             >-<\n");
+		printf(" |              |\n");
+		printf(" |              |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf("_|_\n");
+	} else if (erros == 4) {
+		printf(" ________________________\n");
+		printf(" |              |\n");
+		printf(" |           (o _ o)\n");
+		printf(" |             >-<\n");
+		printf(" |              |\n");
+		printf(" |              |\n");
+		printf(" |              |\n");
+		printf(" |              |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf("_|_\n");
+	} else if (erros == 3) {
+		printf(" ________________________\n");
+		printf(" |              |\n");
+		printf(" |           (o _ o)\n");
+		printf(" |             >-<\n");
+		printf(" |              |\n");
+		printf(" |              |\n");
+		printf(" |              |\n");
+		printf(" |              |\n");
+		printf(" |             /\n");
+		printf(" |           _/\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf("_|_\n");
+	} else if(erros == 2) {
+		printf(" ________________________\n");
+		printf(" |              |\n");
+		printf(" |           (o _ o)\n");
+		printf(" |             >-<\n");
+		printf(" |              |\n");
+		printf(" |              |\n");
+		printf(" |              |\n");
+		printf(" |              |\n");
+		printf(" |             / \\\n");
+		printf(" |           _/   \\_\n");
+		printf(" |\n");
+		printf(" |\n");
+		printf("_|_\n");
+	} else if(erros == 1) {
+		printf(" ________________________\n");
+		printf(" |              | \n");
+		printf(" |           (o _ o) \n");
+		printf(" |             >-< \n");
+		printf(" |             /|\\ \n");
+		printf(" |          _ / | \\_ \n");
+		printf(" |              |  \n");
+		printf(" |              | \n");
+		printf(" |             / \\ \n");
+		printf(" |           _/   \\_ \n");
+		printf(" |\n");
+		printf(" |\n");
+		printf("_|_\n");
+	} else if(erros == 0) {
+		printf(" ________________________\n");
+		printf(" |              | \n");
+		printf(" |           (X _ X) \n");
+		printf(" |             >-< \n");
+		printf(" |             /|\\ \n");
+		printf(" |          _ / | \\_ \n");
+		printf(" |              | \n");
+		printf(" |              | \n");
+		printf(" |             / \\ \n");
+		printf(" |           _/   \\_ \n");
+		printf(" |\n");
+		printf(" |\n");
+		printf("_|_\n");
+	}
+}
+
+void zerar(char tema[],char palavra[],char palavraAux[],char letra,char mesa[],char tentativas[],char chute[]){
+	int i = 0;
+	for(i = 0; i <= 30;i++){
+		tema[i] = 0;
+		palavra[i] = 0;
+		palavraAux[i] = 0;
+		letra = 0;
+		mesa[i] = 0;
+		tentativas[i] = 0;
+		chute[i] = 0;
+	}
+	
+}
